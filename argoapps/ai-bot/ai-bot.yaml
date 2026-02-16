@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubequery
+  name: ai-bot 
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io/foreground
