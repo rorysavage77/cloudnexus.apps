@@ -10,7 +10,7 @@ spec:
     name: in-cluster
     namespace: argocd
   source:
-    path: apps
+    path: argoapps
     repoURL: 'https://github.com/rorysavage77/cloudnexus.apps'
     targetRevision: HEAD
   project: default
