@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/rorysavage77/KubeQuery
-    path: helm/kubequery 
+    path: helm/kubequery
     targetRevision: main
     helm:
       valueFiles:

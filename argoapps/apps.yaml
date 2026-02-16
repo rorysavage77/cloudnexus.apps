@@ -6,14 +6,16 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io/foreground
 spec:
+  project: default
   destination:
     name: in-cluster
     namespace: argocd
   source:
-    path: argoapps
     repoURL: 'https://github.com/rorysavage77/cloudnexus.apps'
+    path: argoapps
     targetRevision: HEAD
-  project: default
+    directory:
+      recurse: true
   syncPolicy:
     syncOptions:
       - CreateNamespace=false
