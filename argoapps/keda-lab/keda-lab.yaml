@@ -22,6 +22,6 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: Deployment
+      name: task-processor # Explicitly target the app being scaled
       jsonPointers:
         - /spec/replicas
-
