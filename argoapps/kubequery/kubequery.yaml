@@ -28,3 +28,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: postgresqueries.kubequery.cloudnexus.io
