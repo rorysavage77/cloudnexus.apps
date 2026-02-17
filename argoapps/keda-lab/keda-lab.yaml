@@ -8,7 +8,7 @@ spec:
   source:
     # Replace this with your actual repo and path
     repoURL: 'git://192.168.1.10/cloudnexus.apps.git'
-    targetRevision: HEAD
+    targetRevision: main 
     path: keda-lab
   destination:
     server: 'https://kubernetes.default.svc'
