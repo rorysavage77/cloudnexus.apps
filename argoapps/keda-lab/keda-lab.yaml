@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keda-test-lab
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # Replace this with your actual repo and path
+    repoURL: 'git://192.168.1.10/cloudnexus.apps.git'
+    targetRevision: HEAD
+    path: keda-lab
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: keda-lab
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
