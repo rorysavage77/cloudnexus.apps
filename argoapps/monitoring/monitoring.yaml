@@ -22,6 +22,8 @@ spec:
         alloy-metrics:
           enabled: true
           deploy: true
+        alloy-singleto:
+          enabled: true
 
         # Mandatory: Where to send the data
         destinations:
