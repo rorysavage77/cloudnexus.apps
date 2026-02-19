@@ -13,7 +13,6 @@ spec:
       values: |
         grafana:
           enabled: true
-          # Optional: Use a sidecar to auto-import dashboards from ConfigMaps
           sidecar:
             dashboards:
               enabled: true
@@ -21,19 +20,31 @@ spec:
               searchNamespace: ALL
 
         prometheus:
+          enabled: true
           prometheusSpec:
-            # ESSENTIAL: This allows Alloy to push data to this Prometheus instance
+            # FIX: Allows Prometheus to start without needing a Persistent Volume (PV)
+            storageSpec:
+              emptyDir:
+                medium: ""
+            
+            # ESSENTIAL: This allows your Alloy pods to push data to this instance
             enableRemoteWriteReceiver: true
-            # Storage retention (adjust as needed for starbase)
+            
+            # Retention settings for starbase
             retention: 10d
-        
-        # Disable redundant collectors already provided by k8s-monitoring
+
+            # Ensures the operator discovers monitoring resources correctly
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+            probeSelectorNilUsesHelmValues: false
+
+        # Disable redundant collectors (already handled by k8s-monitoring app)
         nodeExporter:
           enabled: false
         kubeStateMetrics:
           enabled: false
         
-        # Optional: Disable Alertmanager if you aren't using it yet
+        # Disable Alertmanager to save resources until you need it
         alertmanager:
           enabled: false
 
