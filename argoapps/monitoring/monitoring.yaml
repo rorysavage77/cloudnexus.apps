@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8s-monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: k8s-monitoring
+    targetRevision: 3.8.x  # Recommended to pin the major version
+    helm:
+      values: |
+        cluster:
+          name: starbase
+        clusterMetrics:
+          enabled: true
+        clusterEvents:
+          enabled: true
+        podLogs:
+          enabled: true
+        # Add your externalServices or local destinations here
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
