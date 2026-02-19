@@ -17,6 +17,10 @@ spec:
           prometheusSpec:
             # This enables the receiver for your Alloy pods
             enableRemoteWriteReceiver: true
+        nodeExporter:
+          enabled: false
+        kubeStateMetrics:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
