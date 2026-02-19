@@ -13,40 +13,32 @@ spec:
       values: |
         cluster:
           name: starbase
+        
+        # Enable the features you want
         clusterMetrics:
           enabled: true
         clusterEvents:
           enabled: true
         podLogs:
           enabled: true
-        alloy-metrics:
-          enabled: true
-          deploy: true
-        alloy-singleto:
+
+        # Corrected the typo: alloy-singleton (with an 'n')
+        alloy-singleton:
           enabled: true
 
-        # Mandatory: Where to send the data
+        # Destinations configuration
         destinations:
           - name: prometheus-destination
             type: prometheus
             url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
-            # auth:
-            #   type: basic
-            #   username: "your-id"
-            #   password: "your-password"
-          
           - name: loki-destination
             type: loki
             url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
-            # auth:
-            #   type: basic
-            #   username: "your-id"
-            #   password: "your-password"
 
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
-  
+
   syncPolicy:
     automated:
       prune: true
