@@ -13,14 +13,15 @@ spec:
       values: |
         cluster:
           name: starbase
-
-        # Enabling the "Features"
         clusterMetrics:
           enabled: true
         clusterEvents:
           enabled: true
         podLogs:
           enabled: true
+        alloy-metrics:
+          enabled: true
+          deploy: true
 
         # Mandatory: Where to send the data
         destinations:
