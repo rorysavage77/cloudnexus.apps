@@ -14,7 +14,7 @@ spec:
         cluster:
           name: starbase
         
-        # Enable the features you want
+        # Features
         clusterMetrics:
           enabled: true
         clusterEvents:
@@ -22,11 +22,14 @@ spec:
         podLogs:
           enabled: true
 
-        # Corrected the typo: alloy-singleton (with an 'n')
+        # Explicitly enabling the Alloy collectors to satisfy validations
+        alloy-metrics:
+          enabled: true
         alloy-singleton:
           enabled: true
+        alloy-logs:
+          enabled: true
 
-        # Destinations configuration
         destinations:
           - name: prometheus-destination
             type: prometheus
