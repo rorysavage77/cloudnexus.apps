@@ -31,12 +31,15 @@ spec:
           enabled: true
 
         destinations:
-          - name: prometheus-destination
-            type: prometheus
-            url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
+          #- name: prometheus-destination
+          #  type: prometheus
+          #  url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
           - name: loki-destination
             type: loki
             url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+          - name: local-prometheus
+            type: prometheus
+            url: http://monitoring-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
 
   destination:
     server: https://kubernetes.default.svc
