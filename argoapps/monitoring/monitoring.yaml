@@ -8,21 +8,42 @@ spec:
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: k8s-monitoring
-    targetRevision: 3.8.x  # Recommended to pin the major version
+    targetRevision: 3.8.0
     helm:
       values: |
         cluster:
           name: starbase
+
+        # Enabling the "Features"
         clusterMetrics:
           enabled: true
         clusterEvents:
           enabled: true
         podLogs:
           enabled: true
-        # Add your externalServices or local destinations here
+
+        # Mandatory: Where to send the data
+        destinations:
+          - name: prometheus-destination
+            type: prometheus
+            url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
+            # auth:
+            #   type: basic
+            #   username: "your-id"
+            #   password: "your-password"
+          
+          - name: loki-destination
+            type: loki
+            url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+            # auth:
+            #   type: basic
+            #   username: "your-id"
+            #   password: "your-password"
+
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
+  
   syncPolicy:
     automated:
       prune: true
