@@ -22,16 +22,17 @@ spec:
         prometheus:
           enabled: true
           prometheusSpec:
+            # FIX: This MUST be true for Alloy to push data to Prometheus
+            enableRemoteWriteReceiver: true
+            
             storageSpec:
               emptyDir:
                 medium: ""
-            enableRemoteWriteReceiver: true
             retention: 10d
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
             probeSelectorNilUsesHelmValues: false
 
-        # --- Fix for the Pending Operator ---
         prometheusOperator:
           enabled: true
           resources:
@@ -41,22 +42,17 @@ spec:
             limits:
               cpu: 200m
               memory: 256Mi
-          # Forces the operator to use EndpointSlices for the Kubelet (v1.35 requirement)
           kubeletService:
             enabled: true
             endpointSlice: true
 
-        # --- Fix for the Missing Secret (Admission Webhooks) ---
+        # Disable redundant collectors managed by the other app
         prometheus-node-exporter:
           enabled: false
         kubeStateMetrics:
           enabled: false
-
-        # Disable redundant collectors
         nodeExporter:
           enabled: false
-
-        # Disable Alertmanager to save resources
         alertmanager:
           enabled: false
 
@@ -69,5 +65,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
-      - SkipDryRunOnMissingResource=true
