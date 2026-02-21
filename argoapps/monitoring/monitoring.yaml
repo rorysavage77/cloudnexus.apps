@@ -14,8 +14,7 @@ spec:
         cluster:
           name: starbase
 
-        # --- Aggressive Fix for kube-state-metrics ---
-        # Increases resources to move out of BestEffort QoS and relaxes probes
+        # --- Fix for kube-state-metrics ---
         kube-state-metrics:
           enabled: true
           resources:
@@ -31,11 +30,10 @@ spec:
             timeoutSeconds: 10
           extraArgs:
             - --use-discovery-endpoint-slice=true
-            # Disabling the deprecated endpoints collector causing the log flood
             - --resources=-endpoints 
 
         # --- Fix for Alloy components ---
-        # Provides resource guarantees to match the high restart counts observed
+        # Moving these out of BestEffort QoS to prevent restarts
         alloy-operator:
           resources:
             requests:
@@ -45,20 +43,45 @@ spec:
               cpu: 200m
               memory: 256Mi
 
+        alloy-metrics:
+          enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                cpu: 500m
+                memory: 1Gi
+
+        alloy-logs:
+          enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 200m
+                memory: 512Mi
+
+        alloy-singleton:
+          enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 200m
+                memory: 512Mi
+
         # Features
         clusterMetrics:
           enabled: true
         clusterEvents:
           enabled: true
         podLogs:
-          enabled: true
-
-        # Explicitly enabling the Alloy collectors
-        alloy-metrics:
-          enabled: true
-        alloy-singleton:
-          enabled: true
-        alloy-logs:
           enabled: true
 
         destinations:
