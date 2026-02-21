@@ -14,7 +14,7 @@ spec:
         cluster:
           name: starbase
 
-        # --- Collector Enablement (Fixes Helm Validation Error) ---
+        # --- Collector Enablement ---
         alloy-metrics:
           enabled: true
         alloy-singleton:
@@ -44,11 +44,12 @@ spec:
             - --use-discovery-endpoint-slice=true
             - --resources=-endpoints 
 
-        # --- Destination Configuration ---
+        # --- Destination Configuration (FIXED URL) ---
         destinations:
           - name: local-prometheus
             type: prometheus
-            url: http://monitoring-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
+            # Corrected service name based on your kubectl output
+            url: http://monitoring-stack-kube-prom-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
           - name: loki-destination
             type: loki
             url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
