@@ -14,7 +14,6 @@ spec:
         cluster:
           name: starbase
 
-        # --- Fix for kube-state-metrics ---
         kube-state-metrics:
           enabled: true
           resources:
@@ -24,24 +23,12 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
-          livenessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 15
-            timeoutSeconds: 10
           extraArgs:
             - --use-discovery-endpoint-slice=true
             - --resources=-endpoints 
 
-        # --- Fix for Alloy components ---
-        # Moving these out of BestEffort QoS to prevent restarts
         alloy-operator:
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
+          enabled: true
 
         alloy-metrics:
           enabled: true
@@ -54,29 +41,7 @@ spec:
                 cpu: 500m
                 memory: 1Gi
 
-        alloy-logs:
-          enabled: true
-          alloy:
-            resources:
-              requests:
-                cpu: 100m
-                memory: 256Mi
-              limits:
-                cpu: 200m
-                memory: 512Mi
-
-        alloy-singleton:
-          enabled: true
-          alloy:
-            resources:
-              requests:
-                cpu: 100m
-                memory: 256Mi
-              limits:
-                cpu: 200m
-                memory: 512Mi
-
-        # Features
+        # Features - Ensure these are explicitly set to true
         clusterMetrics:
           enabled: true
         clusterEvents:
@@ -85,20 +50,19 @@ spec:
           enabled: true
 
         destinations:
+          - name: local-prometheus
+            type: prometheus
+            # Ensure this points to the correct service name created by the stack
+            url: http://monitoring-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
           - name: loki-destination
             type: loki
             url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
-          - name: local-prometheus
-            type: prometheus
-            url: http://monitoring-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
 
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
-
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true

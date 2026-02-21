@@ -22,9 +22,8 @@ spec:
         prometheus:
           enabled: true
           prometheusSpec:
-            # FIX: This MUST be true for Alloy to push data to Prometheus
+            # ESSENTIAL: This allows Alloy to push pod metrics to Prometheus
             enableRemoteWriteReceiver: true
-            
             storageSpec:
               emptyDir:
                 medium: ""
@@ -42,11 +41,12 @@ spec:
             limits:
               cpu: 200m
               memory: 256Mi
+          # Forces EndpointSlices for v1.35 compatibility
           kubeletService:
             enabled: true
             endpointSlice: true
 
-        # Disable redundant collectors managed by the other app
+        # Disable redundant components managed by k8s-monitoring app
         prometheus-node-exporter:
           enabled: false
         kubeStateMetrics:
@@ -65,3 +65,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
