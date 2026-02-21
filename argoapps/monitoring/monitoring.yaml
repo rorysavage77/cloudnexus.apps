@@ -15,6 +15,7 @@ spec:
           name: starbase
 
         # --- Fix for the Alloy Operator Crash ---
+        # Ensures the operator is "Burstable" and not throttled during syncs
         alloy-operator:
           enabled: true
           resources:
@@ -26,12 +27,39 @@ spec:
               memory: 512Mi
 
         # --- Collector Enablement ---
+        # Explicitly enabled to satisfy Helm validation logic
         alloy-metrics:
           enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                cpu: 500m
+                memory: 1Gi
+
         alloy-singleton:
           enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 200m
+                memory: 512Mi
+
         alloy-logs:
           enabled: true
+          alloy:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 200m
+                memory: 512Mi
 
         # --- Feature Toggles ---
         clusterMetrics:
@@ -42,6 +70,7 @@ spec:
           enabled: true
 
         # --- Resource & API Fixes for v1.35.1 ---
+        # Stabilizes KSM and bypasses deprecated endpoint logic
         kube-state-metrics:
           enabled: true
           resources:
@@ -56,6 +85,7 @@ spec:
             - --resources=-endpoints 
 
         # --- Destination Configuration ---
+        # Points to the specific Prometheus service name in your cluster
         destinations:
           - name: local-prometheus
             type: prometheus
