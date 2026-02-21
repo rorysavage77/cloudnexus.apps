@@ -14,6 +14,23 @@ spec:
         cluster:
           name: starbase
 
+        # --- Collector Enablement (Fixes Helm Validation Error) ---
+        alloy-metrics:
+          enabled: true
+        alloy-singleton:
+          enabled: true
+        alloy-logs:
+          enabled: true
+
+        # --- Feature Toggles ---
+        clusterMetrics:
+          enabled: true
+        clusterEvents:
+          enabled: true
+        podLogs:
+          enabled: true
+
+        # --- Resource & API Fixes for v1.35.1 ---
         kube-state-metrics:
           enabled: true
           resources:
@@ -27,32 +44,10 @@ spec:
             - --use-discovery-endpoint-slice=true
             - --resources=-endpoints 
 
-        alloy-operator:
-          enabled: true
-
-        alloy-metrics:
-          enabled: true
-          alloy:
-            resources:
-              requests:
-                cpu: 200m
-                memory: 512Mi
-              limits:
-                cpu: 500m
-                memory: 1Gi
-
-        # Features - Ensure these are explicitly set to true
-        clusterMetrics:
-          enabled: true
-        clusterEvents:
-          enabled: true
-        podLogs:
-          enabled: true
-
+        # --- Destination Configuration ---
         destinations:
           - name: local-prometheus
             type: prometheus
-            # Ensure this points to the correct service name created by the stack
             url: http://monitoring-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
           - name: loki-destination
             type: loki
@@ -61,8 +56,10 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
+
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
