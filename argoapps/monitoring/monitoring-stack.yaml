@@ -18,19 +18,35 @@ spec:
               enabled: true
               label: grafana_dashboard
               searchNamespace: ALL
+          # This allows the provisioned dashboards to be editable in the UI
+          dashboardProviders: 
+            dashboardproviders.yaml:
+              apiVersion: 1
+              providers:
+                - name: 'default'
+                  orgId: 1
+                  folder: ''
+                  type: file
+                  disableDeletion: false
+                  editable: true
+                  options:
+                    path: /var/lib/grafana/dashboards/default
 
         prometheus:
           enabled: true
           prometheusSpec:
-            # ESSENTIAL: This allows Alloy to push pod metrics to Prometheus
+            # ESSENTIAL: This must be true for Alloy to push metrics to Prometheus
             enableRemoteWriteReceiver: true
+            # Helps ensure the job name matches dashboard expectations
+            scrapeConfigSelectorNilUsesHelmValues: false
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+            probeSelectorNilUsesHelmValues: false
+            
             storageSpec:
               emptyDir:
                 medium: ""
             retention: 10d
-            serviceMonitorSelectorNilUsesHelmValues: false
-            podMonitorSelectorNilUsesHelmValues: false
-            probeSelectorNilUsesHelmValues: false
 
         prometheusOperator:
           enabled: true
@@ -41,12 +57,12 @@ spec:
             limits:
               cpu: 200m
               memory: 256Mi
-          # Forces EndpointSlices for v1.35 compatibility
+          # Forces EndpointSlices for K8s v1.35 compatibility
           kubeletService:
             enabled: true
             endpointSlice: true
 
-        # Disable redundant components managed by k8s-monitoring app
+        # Disable redundant components managed by the k8s-monitoring app
         prometheus-node-exporter:
           enabled: false
         kubeStateMetrics:
