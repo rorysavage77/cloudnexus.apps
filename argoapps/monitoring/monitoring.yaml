@@ -14,8 +14,21 @@ spec:
         cluster:
           name: starbase
 
-        # --- Fix for the Alloy Operator Crash ---
-        # Ensures the operator is "Burstable" and not throttled during syncs
+        # --- Fix for Dashboard Variable Mismatch ---
+        # This forces the job label to match the hardcoded dashboard variables
+        metrics:
+          alloy:
+            extraConfig: |
+              prometheus.relabel "fix_job_names" {
+                forward_to = [prometheus.remote_write.local_prometheus.receiver]
+                rule {
+                  source_labels = ["job"]
+                  regex         = "integrations/kubernetes/kube-state-metrics"
+                  replacement   = "kube-state-metrics"
+                  target_label  = "job"
+                }
+              }
+
         alloy-operator:
           enabled: true
           resources:
@@ -26,8 +39,6 @@ spec:
               cpu: 500m
               memory: 512Mi
 
-        # --- Collector Enablement ---
-        # Explicitly enabled to satisfy Helm validation logic
         alloy-metrics:
           enabled: true
           alloy:
@@ -41,27 +52,9 @@ spec:
 
         alloy-singleton:
           enabled: true
-          alloy:
-            resources:
-              requests:
-                cpu: 100m
-                memory: 256Mi
-              limits:
-                cpu: 200m
-                memory: 512Mi
-
         alloy-logs:
           enabled: true
-          alloy:
-            resources:
-              requests:
-                cpu: 100m
-                memory: 256Mi
-              limits:
-                cpu: 200m
-                memory: 512Mi
 
-        # --- Feature Toggles ---
         clusterMetrics:
           enabled: true
         clusterEvents:
@@ -69,8 +62,6 @@ spec:
         podLogs:
           enabled: true
 
-        # --- Resource & API Fixes for v1.35.1 ---
-        # Stabilizes KSM and bypasses deprecated endpoint logic
         kube-state-metrics:
           enabled: true
           resources:
@@ -84,8 +75,6 @@ spec:
             - --use-discovery-endpoint-slice=true
             - --resources=-endpoints 
 
-        # --- Destination Configuration ---
-        # Points to the specific Prometheus service name in your cluster
         destinations:
           - name: local-prometheus
             type: prometheus
