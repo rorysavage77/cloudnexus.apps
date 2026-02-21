@@ -13,7 +13,30 @@ spec:
       values: |
         cluster:
           name: starbase
-        
+
+        # --- Fix for kube-state-metrics ---
+        kube-state-metrics:
+          enabled: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          extraArgs:
+            - --use-discovery-endpoint-slice=true
+
+        # --- Fix for Alloy components (matching the 283 restarts) ---
+        alloy-operator:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+
         # Features
         clusterMetrics:
           enabled: true
@@ -22,7 +45,7 @@ spec:
         podLogs:
           enabled: true
 
-        # Explicitly enabling the Alloy collectors to satisfy validations
+        # Explicitly enabling the Alloy collectors
         alloy-metrics:
           enabled: true
         alloy-singleton:
@@ -31,9 +54,6 @@ spec:
           enabled: true
 
         destinations:
-          #- name: prometheus-destination
-          #  type: prometheus
-          #  url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
           - name: loki-destination
             type: loki
             url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
