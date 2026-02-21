@@ -14,6 +14,17 @@ spec:
         cluster:
           name: starbase
 
+        # --- Fix for the Alloy Operator Crash ---
+        alloy-operator:
+          enabled: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
         # --- Collector Enablement ---
         alloy-metrics:
           enabled: true
@@ -44,11 +55,10 @@ spec:
             - --use-discovery-endpoint-slice=true
             - --resources=-endpoints 
 
-        # --- Destination Configuration (FIXED URL) ---
+        # --- Destination Configuration ---
         destinations:
           - name: local-prometheus
             type: prometheus
-            # Corrected service name based on your kubectl output
             url: http://monitoring-stack-kube-prom-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
           - name: loki-destination
             type: loki
