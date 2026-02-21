@@ -22,29 +22,41 @@ spec:
         prometheus:
           enabled: true
           prometheusSpec:
-            # FIX: Allows Prometheus to start without needing a Persistent Volume (PV)
             storageSpec:
               emptyDir:
                 medium: ""
-            
-            # ESSENTIAL: This allows your Alloy pods to push data to this instance
             enableRemoteWriteReceiver: true
-            
-            # Retention settings for starbase
             retention: 10d
-
-            # Ensures the operator discovers monitoring resources correctly
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
             probeSelectorNilUsesHelmValues: false
 
-        # Disable redundant collectors (already handled by k8s-monitoring app)
-        nodeExporter:
+        # --- Fix for the Pending Operator ---
+        prometheusOperator:
+          enabled: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          # Forces the operator to use EndpointSlices for the Kubelet (v1.35 requirement)
+          kubeletService:
+            enabled: true
+            endpointSlice: true
+
+        # --- Fix for the Missing Secret (Admission Webhooks) ---
+        prometheus-node-exporter:
           enabled: false
         kubeStateMetrics:
           enabled: false
-        
-        # Disable Alertmanager to save resources until you need it
+
+        # Disable redundant collectors
+        nodeExporter:
+          enabled: false
+
+        # Disable Alertmanager to save resources
         alertmanager:
           enabled: false
 
