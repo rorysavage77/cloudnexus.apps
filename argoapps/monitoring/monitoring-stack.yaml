@@ -11,6 +11,31 @@ spec:
     targetRevision: 67.11.0
     helm:
       values: |
+        # --- Alertmanager Section ---
+        alertmanager:
+          enabled: true
+          ingress:
+            enabled: false # Set to true if you have an ingress controller
+          config:
+            global:
+              resolve_timeout: 5m
+            route:
+              group_by: ['alertname', 'cluster', 'service']
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 12h
+              receiver: 'null'
+            receivers:
+              - name: 'null'
+          alertmanagerSpec:
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 1Gi
+
         grafana:
           enabled: true
           sidecar:
@@ -58,13 +83,12 @@ spec:
             enabled: true
             endpointSlice: true
 
+        # Keep these as-is based on your Alloy setup
         prometheus-node-exporter:
           enabled: false
         kubeStateMetrics:
           enabled: false
         nodeExporter:
-          enabled: false
-        alertmanager:
           enabled: false
 
   destination:
